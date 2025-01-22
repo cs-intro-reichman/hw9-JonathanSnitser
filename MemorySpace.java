@@ -1,3 +1,6 @@
+
+//import java.lang.classfile.components.ClassPrinter;
+
 /**
  * Represents a managed memory space. The memory space manages a list of allocated 
  * memory blocks, and a list free memory blocks. The methods "malloc" and "free" are 
@@ -19,11 +22,11 @@ public class MemorySpace {
 	 */
 	public MemorySpace(int maxSize) {
 		// initiallizes an empty list of allocated blocks.
-		allocatedList = new LinkedList();
+		LinkedList allocatedList = new LinkedList();
 	    // Initializes a free list containing a single block which represents
 	    // the entire memory. The base address of this single initial block is
 	    // zero, and its length is the given memory size.
-		freeList = new LinkedList();
+		LinkedList freeList = new LinkedList();
 		freeList.addLast(new MemoryBlock(0, maxSize));
 	}
 
@@ -58,7 +61,19 @@ public class MemorySpace {
 	 * @return the base address of the allocated block, or -1 if unable to allocate
 	 */
 	public int malloc(int length) {		
-		//// Replace the following statement with your code
+		Node current = freeList.getNode(0);
+		while (current.block != null) {
+			if (current.block.length == length) {
+				allocatedList.addLast(current.block);
+				freeList.remove(current.block);
+			}
+			if (current.block.length > length) {
+				MemoryBlock mb = new MemoryBlock(current.block.baseAddress, length);
+				allocatedList.addLast(mb);
+				current.block.length = current.block.length - length;
+				current.block.baseAddress = current.block.baseAddress + length;
+			}
+		}
 		return -1;
 	}
 
@@ -71,7 +86,18 @@ public class MemorySpace {
 	 *            the starting address of the block to freeList
 	 */
 	public void free(int address) {
-		//// Write your code here
+		Node current = allocatedList.getNode(0);
+		Boolean didRemove = false;
+		while (current.block != null) {
+			if (current.block.baseAddress == address) {
+				freeList.addLast(current.block);
+				allocatedList.remove(current.block);
+				didRemove = true;
+			}
+		}
+		if (!didRemove) {
+			throw new IllegalArgumentException("No memory block with the address : " + address);
+		}
 	}
 	
 	/**
@@ -88,7 +114,17 @@ public class MemorySpace {
 	 * In this implementation Malloc does not call defrag.
 	 */
 	public void defrag() {
-		/// TODO: Implement defrag test
-		//// Write your code here
+		Node current = freeList.getNode(0);
+		while (current.block.length >= 10 && current.block != null) {
+			current = current.next;
+		}
+		Node next = current.next;
+		while (next.block.length >= 10 && next.block != null) {
+			next = next.next;
+		}
+		if (next.block != null && current.block != null) {
+			current.block.length += next.block.length;
+			this.freeList.remove(next);
+		}
 	}
 }

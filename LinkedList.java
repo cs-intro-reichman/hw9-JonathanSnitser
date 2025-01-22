@@ -10,34 +10,23 @@ public class LinkedList {
 	/**
 	 * Constructs a new list.
 	 */ 
-	public LinkedList () {
+	//public static void main(String[] args) {
+	//	MemoryBlock mB = new MemoryBlock(100, 10); 
+	//	MemoryBlock mB1 = new MemoryBlock(100, 20); 
+	//	MemoryBlock mB2 = new MemoryBlock(100, 30); 
+	//	Node testNode = new Node(mB);
+	//	LinkedList nL = new LinkedList();
+	//	nL.addFirst(mB);
+	//	nL.addLast(mB2);
+	//	nL.add(2, mB1);
+	//	System.out.println(nL);
+	//}
+
+
+	 public LinkedList () {
 		first = null;
 		last = first;
 		size = 0;
-	}
-	
-	/**
-	 * Gets the first node of the list
-	 * @return The first node of the list.
-	 */		
-	public Node getFirst() {
-		return this.first;
-	}
-
-	/**
-	 * Gets the last node of the list
-	 * @return The last node of the list.
-	 */		
-	public Node getLast() {
-		return this.last;
-	}
-	
-	/**
-	 * Gets the current size of the list
-	 * @return The size of the list.
-	 */		
-	public int getSize() {
-		return this.size;
 	}
 	
 	/**
@@ -54,8 +43,13 @@ public class LinkedList {
 			throw new IllegalArgumentException(
 					"index must be between 0 and size");
 		}
-		//// Replace the following statement with your code
-		return null;
+		int i = 0; 
+		Node current = first;
+		while (i != index) {
+			current = current.next;
+			i++;
+		}
+		return current;
 	}
 	
 	/**
@@ -78,7 +72,28 @@ public class LinkedList {
 	 *         if index is negative or greater than the list's size
 	 */
 	public void add(int index, MemoryBlock block) {
-		//// Write your code here
+		if (index < 0 || index > this.size) {
+			throw new IllegalArgumentException("index must be between 0 and size");
+		} else if (index == 0) {
+			Node newNode = new Node(block);
+			newNode.next = this.first;
+			this.first = newNode;
+		} else if (index == this.size) {
+			Node newNode = new Node(block);
+			this.last.next = newNode;
+			this.last = newNode;
+		} else {
+			int i = 0;
+			Node newNode = new Node(block);
+			Node current = this.first;
+			while (i != index) {
+				current = current.next;
+				i++;
+			}
+			newNode.next = current.next;
+			current.next = newNode;
+		}
+		this.size++;
 	}
 
 	/**
@@ -89,7 +104,15 @@ public class LinkedList {
 	 *        the given memory block
 	 */
 	public void addLast(MemoryBlock block) {
-		//// Write your code here
+		Node newNode = new Node(block);
+		if (this.last == null){
+			this.first = this.last = newNode;
+		}
+		else {
+			this.last.next = newNode;
+			this.last = newNode;
+		}
+		this.size++;
 	}
 	
 	/**
@@ -100,7 +123,15 @@ public class LinkedList {
 	 *        the given memory block
 	 */
 	public void addFirst(MemoryBlock block) {
-		//// Write your code here
+		Node newNode = new Node(block);
+		if (this.first == null){
+			this.first = this.last = newNode;
+		}
+		else {
+			newNode.next = this.first;
+			this.first = newNode;
+		}
+		this.size++;
 	}
 
 	/**
@@ -113,8 +144,16 @@ public class LinkedList {
 	 *         if index is negative or greater than or equal to size
 	 */
 	public MemoryBlock getBlock(int index) {
-		//// Replace the following statement with your code
-		return null;
+		if (index < 0 || index > this.size) {
+			throw new IllegalArgumentException("index must be between 0 and size");
+		}
+		int i = 0;
+		Node newNode = this.first;
+		while (i != index) {
+			newNode = newNode.next;
+			i++;
+		}
+		return newNode.block;
 	}	
 
 	/**
@@ -125,7 +164,15 @@ public class LinkedList {
 	 * @return the index of the block, or -1 if the block is not in this list
 	 */
 	public int indexOf(MemoryBlock block) {
-		//// Replace the following statement with your code
+		int i = 0;
+		Node newNode = this.first;
+		while (i != this.size + 1) {
+			if (newNode.block == block) {
+				return i;
+			}
+			newNode = newNode.next;
+			i++;
+		}
 		return -1;
 	}
 
@@ -136,7 +183,22 @@ public class LinkedList {
 	 *        the node that will be removed from this list
 	 */
 	public void remove(Node node) {
-		//// Write your code here
+		if (this.first == node) {
+			this.first = this.first.next;
+		}
+		Node nodeToRemove = this.first.next;
+		Node previous = this.first;
+		int i = 1;
+		while (i != this.size + 1){
+			if (nodeToRemove == node) {
+				if (nodeToRemove == this.last) {
+					this.last = previous;
+				}
+				previous.next = nodeToRemove.next;
+				this.size--;
+				break;
+			}
+		}
 	}
 
 	/**
@@ -147,7 +209,21 @@ public class LinkedList {
 	 *         if index is negative or greater than or equal to size
 	 */
 	public void remove(int index) {
-		//// Write your code here
+		if (index < 0 || index > this.size) {
+			throw new IllegalArgumentException("index must be between 0 and size");
+		}
+		if (index == 0) {
+			this.first = this.first.next;
+		}
+		Node nodeToRemove = this.first.next;
+		Node previous = this.first;
+		int i = 1;
+		while (i != index) {
+			nodeToRemove = nodeToRemove.next;
+			previous = previous.next;
+		}
+		previous.next = nodeToRemove.next;
+		this.size--;
 	}
 
 	/**
@@ -158,21 +234,48 @@ public class LinkedList {
 	 *         if the given memory block is not in this list
 	 */
 	public void remove(MemoryBlock block) {
-		//// Write your code here
+		if (this.first.block == block) {
+			this.first = this.first.next;
+			this.size--;
+		}
+		Node nodeToRemove = this.first.next;
+		Node previous = this.first;
+		int i = 1;
+		while (i != this.size + 1){
+			if (nodeToRemove.block == block) {
+				if (nodeToRemove == this.last) {
+					this.last = previous;
+				}
+				previous.next = nodeToRemove.next;
+				this.size--;
+				break;
+			}
+		}
+		if (i > this.size) {
+			throw new IllegalArgumentException("The given memory block is not in the list.");
+		}
 	}	
 
 	/**
 	 * Returns an iterator over this list, starting with the first element.
 	 */
 	public ListIterator iterator(){
-		return new ListIterator(first);
+		return new ListIterator(this.first);
 	}
 	
 	/**
 	 * A textual representation of this list, for debugging.
 	 */
 	public String toString() {
-		//// Replace the following statement with your code
-		return "";
+		Node current = this.first;
+		if (current == null) {
+			return "()";
+		}
+		String str = "";
+		while (current != null) {	
+			str += current.block + " ";
+			current = current.next;
+		}
+		return str.substring(0, str.length() -1);
 	}
 }
