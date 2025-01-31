@@ -10,19 +10,6 @@ public class LinkedList {
 	/**
 	 * Constructs a new list.
 	 */ 
-	//public static void main(String[] args) {
-	//	MemoryBlock mB = new MemoryBlock(100, 10); 
-	//	MemoryBlock mB1 = new MemoryBlock(100, 20); 
-	//	MemoryBlock mB2 = new MemoryBlock(100, 30); 
-	//	Node testNode = new Node(mB);
-	//	LinkedList nL = new LinkedList();
-	//	nL.addFirst(mB);
-	//	nL.addLast(mB2);
-	//	nL.add(2, mB1);
-	//	System.out.println(nL);
-	//}
-
-
 	 public LinkedList () {
 		first = null;
 		last = first;
@@ -37,7 +24,27 @@ public class LinkedList {
 	 * @throws IllegalArgumentException
 	 *         if index is negative or greater than the list's size
 	 * @return the node at the given index
+	 */	
+	public Node getFirst() {
+		return this.first;
+	}
+
+	/**
+	 * Gets the last node of the list
+	 * @return The last node of the list.
 	 */		
+	public Node getLast() {
+		return this.last;
+	}
+	
+	/**
+	 * Gets the current size of the list
+	 * @return The size of the list.
+	 */		
+	public int getSize() {
+		return this.size;
+	}
+
 	public Node getNode(int index) {
 		if (index < 0 || index > size) {
 			throw new IllegalArgumentException(
@@ -185,20 +192,26 @@ public class LinkedList {
 	public void remove(Node node) {
 		if (this.first == node) {
 			this.first = this.first.next;
+			this.size--;
 		}
-		Node nodeToRemove = this.first.next;
-		Node previous = this.first;
-		int i = 1;
-		while (i != this.size + 1){
-			if (nodeToRemove == node) {
-				if (nodeToRemove == this.last) {
-					this.last = previous;
+		else {
+			Node nodeToRemove = this.first.next;
+			Node previous = this.first;
+			int i = 1;
+			while (i != this.size + 1){
+				if (nodeToRemove == node) {
+					if (nodeToRemove == this.last) {
+						this.last = previous;
+					}
+					else {
+						previous.next = nodeToRemove.next;
+					}
+					this.size--;
+					break;
 				}
-				previous.next = nodeToRemove.next;
-				this.size--;
-				break;
 			}
 		}
+		
 	}
 
 	/**
@@ -215,14 +228,17 @@ public class LinkedList {
 		if (index == 0) {
 			this.first = this.first.next;
 		}
-		Node nodeToRemove = this.first.next;
-		Node previous = this.first;
-		int i = 1;
-		while (i != index) {
-			nodeToRemove = nodeToRemove.next;
-			previous = previous.next;
+		else {
+			Node nodeToRemove = this.first.next;
+			Node previous = this.first;
+			int i = 1;
+			while (i != index) {
+				nodeToRemove = nodeToRemove.next;
+				previous = previous.next;
+				i++;
+			}
+			previous.next = nodeToRemove.next;
 		}
-		previous.next = nodeToRemove.next;
 		this.size--;
 	}
 
@@ -238,21 +254,26 @@ public class LinkedList {
 			this.first = this.first.next;
 			this.size--;
 		}
-		Node nodeToRemove = this.first.next;
-		Node previous = this.first;
-		int i = 1;
-		while (i != this.size + 1){
-			if (nodeToRemove.block == block) {
-				if (nodeToRemove == this.last) {
-					this.last = previous;
+		else {
+			Node nodeToRemove = this.first.next;
+			Node previous = this.first;
+			int i = 1;
+			while (i != this.size + 1){
+				if (nodeToRemove.block == block) {
+					if (nodeToRemove == this.last) {
+						this.last = previous;
+					}
+					else {
+						previous.next = nodeToRemove.next;
+					}
+					this.size--;
+					break;
 				}
-				previous.next = nodeToRemove.next;
-				this.size--;
-				break;
+				i++;
 			}
-		}
-		if (i > this.size) {
-			throw new IllegalArgumentException("The given memory block is not in the list.");
+			if (i > this.size) {
+				throw new IllegalArgumentException("The given memory block is not in the list.");
+			}
 		}
 	}	
 
@@ -267,15 +288,13 @@ public class LinkedList {
 	 * A textual representation of this list, for debugging.
 	 */
 	public String toString() {
-		Node current = this.first;
-		if (current == null) {
-			return "()";
-		}
-		String str = "";
-		while (current != null) {	
-			str += current.block + " ";
-			current = current.next;
-		}
-		return str.substring(0, str.length() -1);
+		String s = "";
+	Node current = first;
+	while (current != null) {
+	s = s + current.block + " ";
+	current = current.next;
+	}
+	return s;
+
 	}
 }
